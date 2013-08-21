@@ -41,3 +41,15 @@ na_complex_state_test() ->
     ?assertEqual([{<<"x">>, [1, 2, [{<<"z">>, 3}]]},
                   {<<"y">>, 3}], NewState).
 
+si_append_test() ->
+    State = [{<<"x">>, <<"abc">>}],
+    Op = {<<"si">>, [[<<"x">>], <<"def">>, 3]},
+    NewState = ot:apply(State, Op),
+    ?assertEqual([{<<"x">>, <<"abcdef">>}], NewState).
+
+si_prepend_test() ->
+    State = [{<<"x">>, <<"abc">>}],
+    Op = {<<"si">>, [[<<"x">>], <<"def">>, 0]},
+    NewState = ot:apply(State, Op),
+    ?assertEqual([{<<"x">>, <<"defabc">>}], NewState).
+
