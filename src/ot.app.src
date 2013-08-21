@@ -1,0 +1,6 @@
+{application, ot, [
+    {description, "Operational Transformation library"},
+    {vsn, "0.0.1"},
+    {modules, []},
+    {applications, [kernel, stdlib]}
+]}.
