@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <title>ot.erl</title>
+  <link rel="stylesheet" href="pycco.css">
+</head>
+<body>
+<div id="background"></div>
+<div id='container'>
+  <div class='section'>
+    <div class='docs'><h1>ot.erl</h1></div>
+  </div>
+  <div class='clearall'>
+  <div class='section' id='section-0'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-0'>#</a>
+      </div>
+      <p>This is an implementation of the real-time algorithm <a href="http://en.wikipedia.org/wiki/Operational_transformation">Operational
+Transformation</a> (or OT) written in Erlang. OT is an optimistic
+concurrency algorithm that lets clients apply operations to a document
+immediately as they are created, and only synchronizes the changes with the
+server after they have been made. If another client has altered the document
+while the first client was making the first operation, we can transform each
+operation so that the server and every client will converge to the same
+document state.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="p">-</span><span class="ni">module</span><span class="p">(</span><span class="n">ot</span><span class="p">).</span>
+<span class="p">-</span><span class="ni">export</span><span class="p">([</span><span class="nb">apply</span><span class="o">/</span><span class="mi">2</span><span class="p">,</span> <span class="n">transform</span><span class="o">/</span><span class="mi">2</span><span class="p">]).</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-1'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-1'>#</a>
+      </div>
+      
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nb">apply</span><span class="p">(</span><span class="nv">State</span><span class="p">,</span> <span class="p">{</span><span class="nv">Type</span><span class="p">,</span> <span class="nv">Opts</span><span class="p">})</span> <span class="o">-&gt;</span>
+    <span class="n">apply_op</span><span class="p">(</span><span class="nv">Type</span><span class="p">,</span> <span class="nv">Opts</span><span class="p">,</span> <span class="nv">State</span><span class="p">).</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-2'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-2'>#</a>
+      </div>
+      <h1>Operations</h1>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-3'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-3'>#</a>
+      </div>
+      <h2>Numbers</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-4'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-4'>#</a>
+      </div>
+      <p><strong>na</strong>: adds a value to a number.</p>
+<p><code>{&lt;&lt;"na"&gt;&gt;, [Path, Number]}</code></p>
+<p>Where <code>Number</code> is the value to add to the number at <code>Path</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nf">apply_op</span><span class="p">(</span><span class="o">&lt;&lt;</span><span class="s">&quot;na&quot;</span><span class="o">&gt;&gt;</span><span class="p">,</span> <span class="p">[[],</span> <span class="nv">Number</span><span class="p">],</span> <span class="nv">N</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="nv">N</span> <span class="o">+</span> <span class="nv">Number</span><span class="p">;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-5'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-5'>#</a>
+      </div>
+      <h2>Strings</h2>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-6'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-6'>#</a>
+      </div>
+      <p><strong>si</strong>: inserts a string.</p>
+<p><code>{&lt;&lt;"si"&gt;&gt;, [Path, String, Offset]}</code></p>
+<p>Where <code>String</code> is the text to insert at the index <code>Offset</code> in the string
+located at <code>Path</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nf">apply_op</span><span class="p">(</span><span class="o">&lt;&lt;</span><span class="s">&quot;si&quot;</span><span class="o">&gt;&gt;</span><span class="p">,</span> <span class="p">[[],</span> <span class="nv">String</span><span class="p">,</span> <span class="nv">Offset</span><span class="p">],</span> <span class="nv">State</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="o">&lt;&lt;</span><span class="nv">Prefix</span><span class="p">:</span><span class="nv">Offset</span><span class="o">/</span><span class="n">binary</span><span class="p">,</span> <span class="nv">Suffix</span><span class="o">/</span><span class="n">binary</span><span class="o">&gt;&gt;</span> <span class="o">=</span> <span class="nv">State</span><span class="p">,</span>
+    <span class="o">&lt;&lt;</span><span class="nv">Prefix</span><span class="o">/</span><span class="n">binary</span><span class="p">,</span> <span class="nv">String</span><span class="o">/</span><span class="n">binary</span><span class="p">,</span> <span class="nv">Suffix</span><span class="o">/</span><span class="n">binary</span><span class="o">&gt;&gt;</span><span class="p">;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-7'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-7'>#</a>
+      </div>
+      <p><strong>sd</strong>: deletes a string.</p>
+<p><code>{&lt;&lt;"sd"&gt;&gt;, [Path, String, Offset]}</code></p>
+<p>Where <code>String</code> is the text to delete, starting at the index <code>Offset</code>, in the
+string located at <code>Path</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nf">apply_op</span><span class="p">(</span><span class="o">&lt;&lt;</span><span class="s">&quot;sd&quot;</span><span class="o">&gt;&gt;</span><span class="p">,</span> <span class="p">[[],</span> <span class="nv">String</span><span class="p">,</span> <span class="nv">Offset</span><span class="p">],</span> <span class="nv">State</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="nv">Size</span> <span class="o">=</span> <span class="nb">size</span><span class="p">(</span><span class="nv">String</span><span class="p">),</span>
+    <span class="o">&lt;&lt;</span><span class="nv">Prefix</span><span class="p">:</span><span class="nv">Offset</span><span class="o">/</span><span class="n">binary</span><span class="p">,</span> <span class="nv">String</span><span class="p">:</span><span class="nv">Size</span><span class="o">/</span><span class="n">binary</span><span class="p">,</span> <span class="nv">Suffix</span><span class="o">/</span><span class="n">binary</span><span class="o">&gt;&gt;</span> <span class="o">=</span> <span class="nv">State</span><span class="p">,</span>
+    <span class="o">&lt;&lt;</span><span class="nv">Prefix</span><span class="o">/</span><span class="n">binary</span><span class="p">,</span> <span class="nv">Suffix</span><span class="o">/</span><span class="n">binary</span><span class="o">&gt;&gt;</span><span class="p">;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-8'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-8'>#</a>
+      </div>
+      <p><strong>sr</strong>: replaces a string.</p>
+<p><code>{&lt;&lt;"sr"&gt;&gt;, [Path, OldString, NewString, Offset]}</code></p>
+<p>Where <code>NewString</code> is the text replacing <code>OldString</code>, starting at <code>Offset</code>,
+in the string located at <code>Path</code>.</p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nf">apply_op</span><span class="p">(</span><span class="o">&lt;&lt;</span><span class="s">&quot;sr&quot;</span><span class="o">&gt;&gt;</span><span class="p">,</span> <span class="p">[[],</span> <span class="nv">OldString</span><span class="p">,</span> <span class="nv">NewString</span><span class="p">,</span> <span class="nv">Offset</span><span class="p">],</span> <span class="nv">State</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="nv">Size</span> <span class="o">=</span> <span class="nb">size</span><span class="p">(</span><span class="nv">OldString</span><span class="p">),</span>
+    <span class="o">&lt;&lt;</span><span class="nv">Prefix</span><span class="p">:</span><span class="nv">Offset</span><span class="o">/</span><span class="n">binary</span><span class="p">,</span> <span class="nv">OldString</span><span class="p">:</span><span class="nv">Size</span><span class="o">/</span><span class="n">binary</span><span class="p">,</span> <span class="nv">Suffix</span><span class="o">/</span><span class="n">binary</span><span class="o">&gt;&gt;</span> <span class="o">=</span> <span class="nv">State</span><span class="p">,</span>
+    <span class="o">&lt;&lt;</span><span class="nv">Prefix</span><span class="o">/</span><span class="n">binary</span><span class="p">,</span> <span class="nv">NewString</span><span class="o">/</span><span class="n">binary</span><span class="p">,</span> <span class="nv">Suffix</span><span class="o">/</span><span class="n">binary</span><span class="o">&gt;&gt;</span><span class="p">;</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-9'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-9'>#</a>
+      </div>
+      <h2>Path and State</h2>
+<p>A state is an erlang structure representing a document. It's close to the
+erlang representation of JSON structures in the <a href="https://github.com/talentdeficit/jsx#json---erlang-mapping">jsx project</a>.</p>
+<p>In other words a state should respect the following mapping:</p>
+<p><strong>number</strong>: <code>integer()</code> or <code>float()</code></p>
+<p><strong>string</strong>: <code>binary()</code></p>
+<p><strong>true, false and null</strong>: <code>true</code>, <code>false</code> and <code>null</code></p>
+<p><strong>array</strong>: lists of any type above and/or objects</p>
+<p><strong>object</strong>: objects are represented by erlang proplists. The empty object
+has the special representation <code>[{}]</code> to differentiate it from the empty
+list. The shorthand form of proplists are <strong>prohibited</strong> and the keys
+<strong>must</strong> be encoded as binaries.</p>
+<p>A path is a list of keys and/or indexes describing the location of an object
+inside a state. Keys traverse objects while indexes traverse arrays.</p>
+<p>Example:</p>
+<p>The path <code>[&lt;&lt;"x"&gt;&gt;, 2, &lt;&lt;"z"&gt;&gt;]</code> would points to <code>&lt;&lt;"value"&gt;&gt;</code> in the
+following state:</p>
+<p><code>[{&lt;&lt;"x"&gt;&gt;, [1, 2, [{&lt;&lt;"z"&gt;&gt;, &lt;&lt;"value"&gt;&gt;}]]}]</code></p>
+<p>The equivalent JSON structure of this state would be:</p>
+<p><code>{"x": [1, 2, {"z": "value"}]}</code></p>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nf">apply_op</span><span class="p">(</span><span class="nv">Type</span><span class="p">,</span> <span class="p">[[</span><span class="nv">Key</span><span class="p">|</span><span class="nv">Keys</span><span class="p">]|</span><span class="nv">Opts</span><span class="p">],</span> <span class="nv">State</span><span class="p">)</span> <span class="k">when</span> <span class="nb">is_binary</span><span class="p">(</span><span class="nv">Key</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="nv">Value</span> <span class="o">=</span> <span class="nn">proplists</span><span class="p">:</span><span class="nf">get_value</span><span class="p">(</span><span class="nv">Key</span><span class="p">,</span> <span class="nv">State</span><span class="p">),</span>
+    <span class="nv">NewValue</span> <span class="o">=</span> <span class="n">apply_op</span><span class="p">(</span><span class="nv">Type</span><span class="p">,</span> <span class="p">[</span><span class="nv">Keys</span><span class="p">|</span><span class="nv">Opts</span><span class="p">],</span> <span class="nv">Value</span><span class="p">),</span>
+    <span class="nn">lists</span><span class="p">:</span><span class="nf">keyreplace</span><span class="p">(</span><span class="nv">Key</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">State</span><span class="p">,</span> <span class="p">{</span><span class="nv">Key</span><span class="p">,</span> <span class="nv">NewValue</span><span class="p">});</span>
+<span class="nf">apply_op</span><span class="p">(</span><span class="nv">Type</span><span class="p">,</span> <span class="p">[[</span><span class="nv">Index</span><span class="p">|</span><span class="nv">Keys</span><span class="p">]|</span><span class="nv">Opts</span><span class="p">],</span> <span class="nv">State</span><span class="p">)</span> <span class="k">when</span> <span class="nb">is_integer</span><span class="p">(</span><span class="nv">Index</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="nv">Value</span> <span class="o">=</span> <span class="nn">lists</span><span class="p">:</span><span class="nf">nth</span><span class="p">(</span><span class="nv">Index</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">State</span><span class="p">),</span>
+    <span class="nv">NewValue</span> <span class="o">=</span> <span class="n">apply_op</span><span class="p">(</span><span class="nv">Type</span><span class="p">,</span> <span class="p">[</span><span class="nv">Keys</span><span class="p">|</span><span class="nv">Opts</span><span class="p">],</span> <span class="nv">Value</span><span class="p">),</span>
+    <span class="n">replace</span><span class="p">(</span><span class="nv">Index</span><span class="p">,</span> <span class="nv">State</span><span class="p">,</span> <span class="nv">NewValue</span><span class="p">).</span></pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+  <div class='section' id='section-10'>
+    <div class='docs'>
+      <div class='octowrap'>
+        <a class='octothorpe' href='#section-10'>#</a>
+      </div>
+      <h1>Transformations</h1>
+    </div>
+    <div class='code'>
+      <div class="highlight"><pre><span class="nf">transform</span><span class="p">({</span><span class="o">&lt;&lt;</span><span class="s">&quot;si&quot;</span><span class="o">&gt;&gt;</span><span class="p">,</span> <span class="p">_</span><span class="nv">Opts</span><span class="p">}</span> <span class="o">=</span> <span class="nv">Op2</span><span class="p">,</span> <span class="nv">Op1</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="n">transform_s</span><span class="p">(</span><span class="nv">Op2</span><span class="p">,</span> <span class="nv">Op1</span><span class="p">);</span>
+<span class="nf">transform</span><span class="p">({</span><span class="o">&lt;&lt;</span><span class="s">&quot;sd&quot;</span><span class="o">&gt;&gt;</span><span class="p">,</span> <span class="p">_</span><span class="nv">Opts</span><span class="p">}</span> <span class="o">=</span> <span class="nv">Op2</span><span class="p">,</span> <span class="nv">Op1</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="n">transform_s</span><span class="p">(</span><span class="nv">Op2</span><span class="p">,</span> <span class="nv">Op1</span><span class="p">).</span>
+<span class="nf">transform_s</span><span class="p">({</span><span class="nv">Type2</span><span class="p">,</span> <span class="p">[</span><span class="nv">Path</span><span class="p">|</span><span class="nv">Opts2</span><span class="p">]},</span> <span class="p">{</span><span class="nv">Type1</span><span class="p">,</span> <span class="p">[</span><span class="nv">Path</span><span class="p">|</span><span class="nv">Opts1</span><span class="p">]})</span>  <span class="o">-&gt;</span>
+    <span class="p">[</span><span class="nv">String1</span><span class="p">,</span> <span class="nv">Offset1</span><span class="p">]</span> <span class="o">=</span> <span class="nv">Opts1</span><span class="p">,</span>
+    <span class="p">[</span><span class="nv">String2</span><span class="p">,</span> <span class="nv">Offset2</span><span class="p">]</span> <span class="o">=</span> <span class="nv">Opts2</span><span class="p">,</span>
+    <span class="nv">NewOpts</span> <span class="o">=</span>
+        <span class="k">if</span>
+            <span class="nv">Offset1</span> <span class="o">=&lt;</span> <span class="nv">Offset2</span><span class="p">,</span> <span class="nv">Type1</span> <span class="o">=:=</span> <span class="o">&lt;&lt;</span><span class="s">&quot;si&quot;</span><span class="o">&gt;&gt;</span> <span class="o">-&gt;</span>
+                <span class="p">[</span><span class="nv">String2</span><span class="p">,</span> <span class="nv">Offset2</span> <span class="o">+</span> <span class="nb">size</span><span class="p">(</span><span class="nv">String1</span><span class="p">)];</span>
+            <span class="nv">Offset1</span> <span class="o">=&lt;</span> <span class="nv">Offset2</span><span class="p">,</span> <span class="nv">Type1</span> <span class="o">=:=</span> <span class="o">&lt;&lt;</span><span class="s">&quot;sd&quot;</span><span class="o">&gt;&gt;</span> <span class="o">-&gt;</span>
+                <span class="p">[</span><span class="nv">String2</span><span class="p">,</span> <span class="nv">Offset2</span> <span class="o">-</span> <span class="nb">size</span><span class="p">(</span><span class="nv">String1</span><span class="p">)];</span>
+            <span class="n">true</span> <span class="o">-&gt;</span> <span class="c">% noop</span>
+                <span class="p">[</span><span class="nv">String2</span><span class="p">,</span> <span class="nv">Offset2</span><span class="p">]</span>
+        <span class="k">end</span><span class="p">,</span>
+    <span class="p">{</span><span class="nv">Type2</span><span class="p">,</span> <span class="p">[</span><span class="nv">Path</span><span class="p">|</span><span class="nv">NewOpts</span><span class="p">]}.</span>
+
+<span class="nf">replace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="p">[_</span><span class="nv">Head</span><span class="p">|</span><span class="nv">Tail</span><span class="p">],</span> <span class="nv">Value</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="p">[</span><span class="nv">Value</span><span class="p">|</span><span class="nv">Tail</span><span class="p">];</span>
+<span class="nf">replace</span><span class="p">(</span><span class="nv">Index</span><span class="p">,</span> <span class="p">[</span><span class="nv">Head</span><span class="p">|</span><span class="nv">Tail</span><span class="p">],</span> <span class="nv">Value</span><span class="p">)</span> <span class="o">-&gt;</span>
+    <span class="p">[</span><span class="nv">Head</span><span class="p">|</span><span class="n">replace</span><span class="p">(</span><span class="nv">Index</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="nv">Tail</span><span class="p">,</span> <span class="nv">Value</span><span class="p">)].</span>
+
+</pre></div>
+    </div>
+  </div>
+  <div class='clearall'></div>
+</div>
+</body>
