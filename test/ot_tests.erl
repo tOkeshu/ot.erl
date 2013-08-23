@@ -65,6 +65,24 @@ sd_append_test() ->
     NewState = ot:apply(State, Op),
     ?assertEqual([{<<"x">>, <<"a">>}], NewState).
 
+sr_same_size_test() ->
+    State = [{<<"x">>, <<"abcde">>}],
+    Op = {<<"sr">>, [[<<"x">>], <<"bcd">>, <<"xxx">>, 1]},
+    NewState = ot:apply(State, Op),
+    ?assertEqual([{<<"x">>, <<"axxxe">>}], NewState).
+
+sr_bigger_size_test() ->
+    State = [{<<"x">>, <<"abcde">>}],
+    Op = {<<"sr">>, [[<<"x">>], <<"bcd">>, <<"sooobiiig">>, 1]},
+    NewState = ot:apply(State, Op),
+    ?assertEqual([{<<"x">>, <<"asooobiiige">>}], NewState).
+
+sr_smaller_size_test() ->
+    State = [{<<"x">>, <<"abcde">>}],
+    Op = {<<"sr">>, [[<<"x">>], <<"bcd">>, <<"t">>, 1]},
+    NewState = ot:apply(State, Op),
+    ?assertEqual([{<<"x">>, <<"ate">>}], NewState).
+
 si_transform_si_test() ->
     Op1 = {<<"si">>, [[<<"x">>], <<"abc">>, 0]},
     Op2 = {<<"si">>, [[<<"x">>], <<"def">>, 0]},
