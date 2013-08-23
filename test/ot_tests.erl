@@ -53,3 +53,15 @@ si_prepend_test() ->
     NewState = ot:apply(State, Op),
     ?assertEqual([{<<"x">>, <<"defabc">>}], NewState).
 
+sd_prepend_test() ->
+    State = [{<<"x">>, <<"abc">>}],
+    Op = {<<"sd">>, [[<<"x">>], <<"ab">>, 0]},
+    NewState = ot:apply(State, Op),
+    ?assertEqual([{<<"x">>, <<"c">>}], NewState).
+
+sd_append_test() ->
+    State = [{<<"x">>, <<"abc">>}],
+    Op = {<<"sd">>, [[<<"x">>], <<"bc">>, 1]},
+    NewState = ot:apply(State, Op),
+    ?assertEqual([{<<"x">>, <<"a">>}], NewState).
+

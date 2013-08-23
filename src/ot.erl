@@ -9,6 +9,10 @@ apply_op(<<"na">>, [[], Number], N) ->
 apply_op(<<"si">>, [[], String, Offset], State) ->
     <<Prefix:Offset/binary, Suffix/binary>> = State,
     <<Prefix/binary, String/binary, Suffix/binary>>;
+apply_op(<<"sd">>, [[], String, Offset], State) ->
+    Size = size(String),
+    <<Prefix:Offset/binary, String:Size/binary, Suffix/binary>> = State,
+    <<Prefix/binary, Suffix/binary>>;
 apply_op(Type, [[Key|Keys]|Opts], State) when is_binary(Key) ->
     Value = proplists:get_value(Key, State),
     NewValue = apply_op(Type, [Keys|Opts], Value),
