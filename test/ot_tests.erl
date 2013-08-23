@@ -65,3 +65,39 @@ sd_append_test() ->
     NewState = ot:apply(State, Op),
     ?assertEqual([{<<"x">>, <<"a">>}], NewState).
 
+si_transform_si_test() ->
+    Op1 = {<<"si">>, [[<<"x">>], <<"abc">>, 0]},
+    Op2 = {<<"si">>, [[<<"x">>], <<"def">>, 0]},
+    NewOp2 = ot:transform(Op2, Op1),
+    ?assertEqual({<<"si">>, [[<<"x">>], <<"def">>, 3]}, NewOp2).
+
+si_transform_sd_test() ->
+    Op1 = {<<"si">>, [[<<"x">>], <<"abc">>, 0]},
+    Op2 = {<<"sd">>, [[<<"x">>], <<"def">>, 0]},
+    NewOp2 = ot:transform(Op2, Op1),
+    ?assertEqual({<<"sd">>, [[<<"x">>], <<"def">>, 3]}, NewOp2).
+
+si_transform_noop_test() ->
+    Op1 = {<<"si">>, [[<<"x">>], <<"abc">>, 3]},
+    Op2 = {<<"si">>, [[<<"x">>], <<"def">>, 0]},
+    NewOp2 = ot:transform(Op2, Op1),
+    ?assertEqual({<<"si">>, [[<<"x">>], <<"def">>, 0]}, NewOp2).
+
+sd_transform_sd_test() ->
+    Op1 = {<<"sd">>, [[<<"x">>], <<"abc">>, 0]},
+    Op2 = {<<"sd">>, [[<<"x">>], <<"def">>, 3]},
+    NewOp2 = ot:transform(Op2, Op1),
+    ?assertEqual({<<"sd">>, [[<<"x">>], <<"def">>, 0]}, NewOp2).
+
+sd_transform_si_test() ->
+    Op1 = {<<"sd">>, [[<<"x">>], <<"abc">>, 0]},
+    Op2 = {<<"si">>, [[<<"x">>], <<"def">>, 3]},
+    NewOp2 = ot:transform(Op2, Op1),
+    ?assertEqual({<<"si">>, [[<<"x">>], <<"def">>, 0]}, NewOp2).
+
+sd_transform_noop_test() ->
+    Op1 = {<<"sd">>, [[<<"x">>], <<"abc">>, 3]},
+    Op2 = {<<"si">>, [[<<"x">>], <<"def">>, 0]},
+    NewOp2 = ot:transform(Op2, Op1),
+    ?assertEqual({<<"si">>, [[<<"x">>], <<"def">>, 0]}, NewOp2).
+
