@@ -113,7 +113,8 @@ apply_op(Type, [[Index|Keys]|Opts], State) when is_integer(Index) ->
     replace(Index, State, NewValue).
 
 %% # Transformations
-
+transform(OpToTr, Ops) when is_list(Ops) ->
+    lists:foldl(fun(Op1, Op2) -> transform(Op2, Op1) end, OpToTr, Ops);
 transform({<<"si">>, _Opts} = Op2, Op1) ->
     transform_s(Op2, Op1);
 transform({<<"sd">>, _Opts} = Op2, Op1) ->

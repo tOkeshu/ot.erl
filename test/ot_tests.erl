@@ -119,3 +119,11 @@ sd_transform_noop_test() ->
     NewOp2 = ot:transform(Op2, Op1),
     ?assertEqual({<<"si">>, [[<<"x">>], <<"def">>, 0]}, NewOp2).
 
+transform_multiple_test() ->
+    Op1 = {<<"si">>, [[<<"x">>], <<"x">>, 0]},
+    Op2 = {<<"si">>, [[<<"x">>], <<"a">>, 0]},
+    Op3 = {<<"si">>, [[<<"x">>], <<"b">>, 1]},
+    Op4 = {<<"si">>, [[<<"x">>], <<"c">>, 2]},
+    NewOp1 = ot:transform(Op1, [Op2, Op3, Op4]),
+    ?assertEqual({<<"si">>, [[<<"x">>], <<"x">>, 3]}, NewOp1).
+
