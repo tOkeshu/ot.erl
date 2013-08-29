@@ -13,8 +13,8 @@
 -export([apply/2, transform/2]).
 
 %%
-apply(State, {Type, Opts}) ->
-    apply_op(Type, Opts, State).
+apply(State, [Type, Path, Opts]) ->
+    apply_op(Type, Path, Opts, State).
 
 %% # Operations
 
@@ -22,46 +22,46 @@ apply(State, {Type, Opts}) ->
 
 %% **na**: adds a value to a number.
 %%
-%% `{<<"na">>, [Path, Number]}`
+%% `[<<"na">>, Path, [Number]]`
 %%
 %% Where `Number` is the value to add to the number at `Path`.
 %%
-apply_op(<<"na">>, [[], Number], N) ->
+apply_op(<<"na">>, [], [Number], N) ->
     N + Number;
 
 %% ## Strings
 
 %% **si**: inserts a string.
 %%
-%% `{<<"si">>, [Path, String, Offset]}`
+%% `[<<"si">>, Path, [String, Offset]]`
 %%
 %% Where `String` is the text to insert at the index `Offset` in the string
 %% located at `Path`.
 %%
-apply_op(<<"si">>, [[], String, Offset], State) ->
+apply_op(<<"si">>, [], [String, Offset], State) ->
     <<Prefix:Offset/binary, Suffix/binary>> = State,
     <<Prefix/binary, String/binary, Suffix/binary>>;
 
 %% **sd**: deletes a string.
 %%
-%% `{<<"sd">>, [Path, String, Offset]}`
+%% `[<<"sd">>, Path, [String, Offset]]`
 %%
 %% Where `String` is the text to delete, starting at the index `Offset`, in the
 %% string located at `Path`.
 %%
-apply_op(<<"sd">>, [[], String, Offset], State) ->
+apply_op(<<"sd">>, [], [String, Offset], State) ->
     Size = size(String),
     <<Prefix:Offset/binary, String:Size/binary, Suffix/binary>> = State,
     <<Prefix/binary, Suffix/binary>>;
 
 %% **sr**: replaces a string.
 %%
-%% `{<<"sr">>, [Path, OldString, NewString, Offset]}`
+%% `[<<"sr">>, Path, [OldString, NewString, Offset]]`
 %%
 %% Where `NewString` is the text replacing `OldString`, starting at `Offset`,
 %% in the string located at `Path`.
 %%
-apply_op(<<"sr">>, [[], OldString, NewString, Offset], State) ->
+apply_op(<<"sr">>, [], [OldString, NewString, Offset], State) ->
     Size = size(OldString),
     <<Prefix:Offset/binary, OldString:Size/binary, Suffix/binary>> = State,
     <<Prefix/binary, NewString/binary, Suffix/binary>>;
@@ -103,23 +103,25 @@ apply_op(<<"sr">>, [[], OldString, NewString, Offset], State) ->
 %% `{"x": [1, 2, {"z": "value"}]}`
 %%
 %%
-apply_op(Type, [[Key|Keys]|Opts], State) when is_binary(Key) ->
+apply_op(Type, [Key|Keys], Opts, State) when is_binary(Key) ->
     Value = proplists:get_value(Key, State),
-    NewValue = apply_op(Type, [Keys|Opts], Value),
+    NewValue = apply_op(Type, Keys, Opts, Value),
     lists:keyreplace(Key, 1, State, {Key, NewValue});
-apply_op(Type, [[Index|Keys]|Opts], State) when is_integer(Index) ->
+apply_op(Type, [Index|Keys], Opts, State) when is_integer(Index) ->
     Value = lists:nth(Index + 1, State),
-    NewValue = apply_op(Type, [Keys|Opts], Value),
+    NewValue = apply_op(Type, Keys, Opts, Value),
     replace(Index, State, NewValue).
 
 %% # Transformations
-transform(OpToTr, Ops) when is_list(Ops) ->
+transform(OpToTr, []) ->
+    OpToTr;
+transform(OpToTr, Ops) when is_list(hd(Ops)) ->
     lists:foldl(fun(Op1, Op2) -> transform(Op2, Op1) end, OpToTr, Ops);
-transform({<<"si">>, _Opts} = Op2, Op1) ->
+transform([<<"si">>|_Opts] = Op2, Op1) ->
     transform_s(Op2, Op1);
-transform({<<"sd">>, _Opts} = Op2, Op1) ->
+transform([<<"sd">>|_Opts] = Op2, Op1) ->
     transform_s(Op2, Op1).
-transform_s({Type2, [Path|Opts2]}, {Type1, [Path|Opts1]})  ->
+transform_s([Type2, Path, Opts2], [Type1, Path, Opts1])  ->
     [String1, Offset1] = Opts1,
     [String2, Offset2] = Opts2,
     NewOpts =
@@ -131,7 +133,7 @@ transform_s({Type2, [Path|Opts2]}, {Type1, [Path|Opts1]})  ->
             true -> % noop
                 [String2, Offset2]
         end,
-    {Type2, [Path|NewOpts]}.
+    [Type2, Path, NewOpts].
 
 replace(0, [_Head|Tail], Value) ->
     [Value|Tail];
