@@ -127,3 +127,8 @@ transform_multiple_test() ->
     NewOp1 = ot:transform(Op1, [Op2, Op3, Op4]),
     ?assertEqual({<<"si">>, [[<<"x">>], <<"x">>, 3]}, NewOp1).
 
+transform_noop_test() ->
+    Op1 = {<<"si">>, [[<<"x">>], <<"x">>, 0]},
+    Op2 = ot:transform(Op1, []),
+    ?assertEqual(Op1, Op2).
+
